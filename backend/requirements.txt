@@ -1,0 +1,28 @@
+# FastAPI and Server
+fastapi==0.109.0
+uvicorn==0.27.0
+python-multipart==0.0.6
+pydantic==2.5.3
+python-jose==3.3.0
+
+# OpenAI
+openai==1.6.1
+
+# Image Processing
+Pillow==10.2.0
+pytesseract==0.3.10
+
+# Environment and Utils
+python-dotenv==1.0.0
+requests==2.31.0
+
+# CORS
+fastapi-cors==0.0.6
+
+# Type Hints
+typing-extensions==4.9.0
+
+# Development Tools
+black==24.1.1  # Code formatting
+isort==5.13.2  # Import sorting
+flake8==7.0.0  # Code linting
