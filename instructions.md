@@ -1,151 +1,158 @@
 # AI-Powered Sales Assistant - Project Requirements Document
 
 ## 1. Project Overview
-Develop an AI-powered sales assistant that integrates with existing CRM systems to provide real-time insights, recommendations, and support to sales representatives during client interactions. 
 
-Imagine a sales representative visiting a restaurant owner. Sales representatives can take a photo of the menu from restaurant. The AI assistant analyzes the ingredients from the menu, and having analyzed the restaurant's past order history, proactively suggests ingredients that align with the restaurant's menu. It also alerts the representative that certain ingredients are not purchased from the company and suggests alternative options.
+The AI-Powered Sales Assistant is a sophisticated tool designed to enhance the effectiveness of sales representatives during client interactions, particularly in the food service industry. The system integrates with existing CRM systems to provide real-time insights and recommendations through menu analysis and order history assessment.
 
-**Tech Stack:**
-- NextJS 14
-- Shadcn UI
-- Tailwind CSS
-- Lucid
-- OpenAI
+### Key Features
+- Menu image analysis using Large Language Models 
+- Mobile-first design for field sales representatives
+
+### Technology Stack
+- Frontend: Next.js 14 with TypeScript
+- UI Components: Shadcn UI
+- Styling: Tailwind CSS
+- Icons: Lucide
+- AI Integration: OpenAI GPT-4
 
 ## 2. Core Functionalities
 
-### 2.1 User-Friendly Interface
+### 2.1 Menu Analysis System
 
-#### 2.1.1 Menu Upload & Results Display
+#### Menu Image Processing
+- **Image Upload Interface**
+  - Support for multiple image formats (JPG, PNG)
+  - Mobile camera integration
+  - Image preprocessing for optimal OCR results
+  - Progress indicator during analysis
 
-**uploadMenuImage(imageFile: File) → void**
-- Purpose: Provide simple menu photo upload interface
-- Inputs: imageFile - Selected image file
-- Outputs: None (triggers image analysis workflow)
-- Process:
-  - Validate file format and size
-  - Send to backend for analysis
-  - Display progress and results
+#### Text Recognition and Analysis
+- **Menu Text Extraction**
+  - OCR processing using OpenAI's GPT-4o-mini model
+  - Structured data extraction for menu items
+  - Price and description parsing
+  - Ingredient identification and categorization
 
-**displayAnalysisResults(menuAnalysis: MenuAnalysisResult) → void**
-- Purpose: Show recognized menu items and insights
-- Inputs: menuAnalysis - Detailed menu breakdown
-- Outputs: UI rendering of results
-- Process:
-  - Convert data to user-readable format
-  - Provide interactive selection elements
-
-#### 2.1.2 Recommended Products & Alternatives UI
-
-**displayRecommendations(recommendationList: RecommendationList) → void**
-- Purpose: Present recommendations clearly
-- Inputs: recommendationList - Recommended items with metadata
-- Outputs: Visual/textual product list with details
-- Process:
-  - Sort/filter for relevance
-  - Show costs and availability
-  - Enable cart/notes functionality
+#### Ingredient Analysis
+- **Automated Ingredient Detection**
+  - Pattern recognition for common ingredients
+  - Context-aware ingredient mapping
+  - Portion size estimation
+  - Allergen and dietary restriction flagging
 
 
-### 2.2 Menu Image Recognition & Analysis
+### 2.2 User Interface
 
-#### 2.2.1. Image Processing
+#### Sales Representative Dashboard
+- **Main Features**
+  - Real-time menu analysis results
+  - Product recommendations panel with mock data as placeholder 
+  - Order history visualization with mock data as placeholder
+  - Client profile integration with mock data as placeholder
+  - Note-taking capabilities
 
-**analyzeMenuImage(imageData: Image) → MenuAnalysisResult**
-- Purpose: Analyze the photo of a menu to identify dishes and/or ingredients OpenAI GPT-4o mini model
-- Inputs:
-  - imageData: The raw image file or processed image data
-- Outputs:
-  - MenuAnalysisResult: A structured result containing recognized dishes 
-- Process:
-  - Use OpenAI GPT-4o mini model to detect text
-  - Parse text to extract dish names, prices, keywords, and potential ingredients
-  - Return structured data for the next analysis step 
+#### Client Interaction Tools
+- **Communication Features**
+  - Product presentation mode with mock data as placeholder
+  - Price quote generator with mock data as placeholder
+  - Order draft creation with mock data as placeholder
+  - Digital product catalog with mock data as placeholder
 
-#### 2.2.2. Menu Data Extraction
+## 3. Technical Architecture
 
-**extractIngredientsFromText(text: string) → IngredientList**
-- Purpose: Identify ingredient names from MenuAnalysisResult
-- Inputs:
-  - text: MenuAnalysisResult
-- Outputs:
-  - IngredientList: A list of identified ingredient objects or strings
-- Process:
-  - Use OpenAI GPT-4o mini model to identify the ingredients used for each dish 
-  - Return a refined list of dishes and their recognized ingredients
-  - Show this result in the UI 
-
-
-## 3. Documentation of packages and libraries used
-
-### Front-End: Next.js
-1. **Next.js**
-   - Package: `next`
-   - Usage: SPA + SSR, routing, serverless/static exports
-
-2. **React**
-   - Packages: `react`, `react-dom`
-   - Usage: UI component building
-
-3. **TypeScript**
-   - Package: `typescript`
-   - Usage: Type safety and tooling
-
-4. **UI & Styling**
-    - Tailwind CSS (`tailwindcss`)
-
-
-### Back-End: Python
-
-#### Python Web Framework
-- **FastAPI**
-  - Package: `fastapi`
-  - Usage: RESTful endpoints, OpenAPI docs
-  - Run with: `uvicorn main:app --reload`
-
-#### Image Handling
-- **pytesseract**: gpt-4o mini  
-- **Pillow**: Image preprocessing
-
-
-## 4. File structure
-├── README.md
-├── .gitignore
-├── docker-compose.yml       # (Optional) 
-│
-├── frontend/                # Next.js front-end app
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── next.config.js
-│   ├── public/
-│   │   └── images/
-│   ├── styles/              # Global or Tailwind CSS styles
-│   │   └── globals.css
-│   ├── pages/
-│   │   ├── _app.tsx
-│   │   ├── index.tsx        # Home page
-│   │   └── sales-assistant/
-│   │       └── index.tsx    # Main sales assistant UI
-│   ├── components/
+### Frontend Architecture
+```
+frontend/
+├── components/
+│   ├── menu/
 │   │   ├── MenuUpload.tsx
-│   │   ├── Recommendations.tsx
-│   │   └── ...
-│   └── utils/               # Helper functions or fetch wrappers
-│       └── fetchClient.ts
-│
-└── backend/                 # Python FastAPI backend
-    ├── requirements.txt     # Python dependencies (FastAPI, Pillow, pytesseract, etc.)
-    ├── main.py              # Entry point for FastAPI ("uvicorn main:app --reload")
-    ├── app/
-    │   ├── __init__.py
-    │   ├── config.py        # Config variables, DB connections, etc. (if needed)
-    │   ├── routes/
-    │   │   ├── ocr.py       # Endpoint for menu image upload & 
-    │   │   └── __init__.py
-    │   ├── services/
-    │   │   ├── ocr_service.py       # Contains the OCR logic w/ pytesseract
-    │   └── utils/
-    │       └── image_processing.py  # If you need specialized image preprocessing
-    └── data/                        # Mock data files or local DB
-        ├── product_catalog.json
-        └── ...
+│   │   ├── AnalysisResults.tsx
+│   │   └── IngredientList.tsx
+│   ├── recommendations/
+│   │   ├── ProductGrid.tsx
+│   │   └── AlternativesList.tsx
+│   └── shared/
+│       ├── Layout.tsx
+│       └── Loading.tsx
+├── pages/
+│   ├── index.tsx
+│   └── sales-assistant/
+├── styles/
+│   └── globals.css
+└── utils/
+    ├── api.ts
+    └── helpers.ts
+```
+
+### Backend Architecture
+```
+backend/
+├── app/
+│   ├── api/
+│   │   ├── menu_analysis.py
+│   │   └── recommendations.py
+│   ├── services/
+│   │   ├── ocr_service.py
+│   │   └── recommendation_service.py
+│   └── utils/
+│       └── image_processing.py
+├── config/
+│   └── settings.py
+└── main.py
+```
+
+## 4. Integration Requirements
+
+### OpenAI Integration
+- Secure API key management
+- Rate limiting implementation
+- Error handling and fallback mechanisms
+- Usage monitoring and optimization
+
+## 5. Performance Requirements
+
+### Response Times
+- Menu analysis: < 5 seconds
+- Recommendation generation: < 2 seconds
+- UI interactions: < 100ms
+- Image upload: < 3 seconds for 5MB files
+
+### Scalability
+- Support for 1000+ concurrent users
+- Handle 10,000+ menu analyses per day
+- Store historical data for 2+ years
+- Process multiple image uploads simultaneously
+
+## 6. Security Requirements
+
+- End-to-end encryption for data transmission
+- Secure storage of customer data
+- Role-based access control
+- Regular security audits
+- Compliance with industry standards
+- Audit logging of all system activities
+
+## 7. Development and Deployment
+
+### Development Process
+- Git-based version control
+- Feature branch workflow
+- Automated testing requirements
+- Code review process
+- Documentation requirements
+
+### Deployment Strategy
+- Containerized deployment using Docker
+- CI/CD pipeline implementation
+- Staging and production environments
+- Automated backup systems
+- Monitoring and alerting setup
+
+## 8. Future Considerations
+
+- Multi-language support
+- Offline mode capabilities
+- Advanced analytics dashboard
+- Mobile app development
+- Integration with additional CRM platforms
+- Enhanced AI capabilities

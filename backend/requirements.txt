@@ -3,10 +3,10 @@ fastapi==0.109.0
 uvicorn==0.27.0
 python-multipart==0.0.6
 pydantic==2.5.3
-python-jose==3.3.0
+python-jose[cryptography]==3.3.0
 
 # OpenAI
-openai==1.6.1
+openai==1.10.0
 
 # Image Processing
 Pillow==10.2.0
@@ -26,3 +26,8 @@ typing-extensions==4.9.0
 black==24.1.1  # Code formatting
 isort==5.13.2  # Import sorting
 flake8==7.0.0  # Code linting
+
+# Additional dependencies
+passlib[bcrypt]==1.7.4
+pydantic-settings==2.1.0
+httpx==0.26.0
