@@ -10,6 +10,7 @@ from app.services.menu_analysis import (
 from app.core.config import settings
 from app.schemas.menu import MenuAnalysisResponse, ErrorResponse, MenuItem
 from app.schemas.product import ProductList, Product
+from .recommendations import update_menu_items
 
 router = APIRouter()
 
@@ -19,7 +20,7 @@ router = APIRouter()
     response_model=MenuAnalysisResponse,
     responses={400: {"model": ErrorResponse}, 500: {"model": ErrorResponse}},
     summary="Analyze menu image",
-    description="Upload and analyze a menu image to extract items, ingredients, and allergens",
+    description="Upload and analyze a menu image to extract items and ingredients",
 )
 async def analyze_menu(file: UploadFile = File(...)) -> MenuAnalysisResponse:
     """
@@ -63,14 +64,8 @@ async def analyze_menu(file: UploadFile = File(...)) -> MenuAnalysisResponse:
                 detail=f"Error analyzing menu: {analysis_result.get('error', 'Unknown error')}",
             )
 
-        # Get product recommendations based on the analysis
-        recommendations = get_ingredient_recommendations(analysis_result["menu_items"])
-
-        if not recommendations["success"]:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error generating recommendations: {recommendations.get('error', 'Unknown error')}",
-            )
+        # Store menu items for recommendations
+        update_menu_items(analysis_result["menu_items"])
 
         # Convert the response to proper schema
         try:
@@ -85,18 +80,16 @@ async def analyze_menu(file: UploadFile = File(...)) -> MenuAnalysisResponse:
 
     except HTTPException:
         raise
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Unexpected error: {str(e)}",
+            detail=f"Error processing menu: {str(e)}",
         )
     finally:
-        # Clean up the uploaded file
+        # Clean up uploaded file
         if os.path.exists(file_path):
-            try:
-                os.remove(file_path)
-            except Exception:
-                pass  # Ignore cleanup errors
+            os.remove(file_path)
 
 
 @router.get(

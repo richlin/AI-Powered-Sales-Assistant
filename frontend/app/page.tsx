@@ -80,7 +80,6 @@ export default function Home() {
   const handleUploadComplete = (data) => {
     if (data.menu_items) {
       setMenuItems(data.menu_items)
-      // Fetch product recommendations based on the menu analysis
       fetchRecommendations()
     }
     setShowResults(true)
@@ -113,186 +112,158 @@ export default function Home() {
     })
   }
 
-  const selectedAgentName = mockAgents.find(agent => agent.id === selectedAgent)?.name
-  const selectedClientName = mockClients.find(client => client.id === selectedClient)?.name
-
   return (
-    <div className="container mx-auto p-6">
-      <header className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h1 className="text-4xl font-bold">Sales Assistant Dashboard</h1>
-            <p className="text-muted-foreground mt-2">
-              Upload menus and get instant analysis and recommendations
-            </p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="bcg-header py-4">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">AI-Powered Sales Assistant</h1>
+            {showResults && (
+              <Button
+                variant="outline"
+                className="bg-white text-[#009B4D] hover:bg-gray-100"
+                onClick={handleClear}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear Analysis
+              </Button>
+            )}
           </div>
-          {showResults && (
-            <Button 
-              variant="outline" 
-              onClick={handleClear}
-              className="flex items-center gap-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              Clear Analysis
-            </Button>
-          )}
         </div>
-        {(selectedAgentName || selectedClientName) && (
-          <div className="flex items-center gap-2 mt-4 text-sm">
-            {selectedAgentName && (
-              <div className="flex items-center gap-2 bg-secondary px-3 py-1.5 rounded-md">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span>Agent: <span className="font-medium">{selectedAgentName}</span></span>
-              </div>
-            )}
-            {selectedClientName && (
-              <div className="flex items-center gap-2 bg-secondary px-3 py-1.5 rounded-md">
-                <Building className="h-4 w-4 text-muted-foreground" />
-                <span>Client: <span className="font-medium">{selectedClientName}</span></span>
-              </div>
-            )}
-          </div>
-        )}
       </header>
 
-      <div className="flex gap-4 mb-8">
-        <div className="flex-1">
-          <label className="text-sm font-medium mb-2 block">Select Sales Agent</label>
-          <Select value={selectedAgent} onValueChange={setSelectedAgent}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Choose an agent">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  <span>Choose an agent</span>
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {mockAgents.map((agent) => (
-                <SelectItem key={agent.id} value={agent.id}>
-                  <div className="flex flex-col">
-                    <span>{agent.name}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {agent.region} - {agent.expertise}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Navigation */}
+      <nav className="bcg-nav py-2">
+        <div className="container mx-auto px-4">
+          <div className="flex space-x-8">
+            <span className="bcg-nav-item-active">Menu Analysis</span>
+            <span className="bcg-nav-item">Order History</span>
+            <span className="bcg-nav-item">Reports</span>
+          </div>
         </div>
+      </nav>
 
-        <div className="flex-1">
-          <label className="text-sm font-medium mb-2 block">Select Client</label>
-          <Select value={selectedClient} onValueChange={setSelectedClient}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Choose a client">
-                <div className="flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  <span>Choose a client</span>
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {mockClients.map((client) => (
-                <SelectItem key={client.id} value={client.id}>
-                  <div className="flex flex-col">
-                    <span>{client.name}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {client.type} - {client.location}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Menu Analysis</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <MenuUpload onUploadComplete={handleUploadComplete} />
-            {showResults && <AnalysisResults items={menuItems} />}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Product Recommendations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {showResults ? (
-              <ProductGrid products={products} />
-            ) : (
-              <div className="text-muted-foreground">
-                Upload a menu to see product recommendations
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Client Profile</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {selectedClient ? (
-              <div className="space-y-4">
-                {mockClients.map((client) => 
-                  client.id === selectedClient && (
-                    <div key={client.id}>
-                      <h3 className="font-medium">{client.name}</h3>
-                      <p className="text-muted-foreground">Type: {client.type}</p>
-                      <p className="text-muted-foreground">Location: {client.location}</p>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        {/* Selection Section */}
+        <div className="grid gap-4 md:grid-cols-2 mb-8">
+          <div className="space-y-4">
+            <label className="text-sm font-medium text-gray-700">Select Sales Agent</label>
+            <Select value={selectedAgent} onValueChange={setSelectedAgent}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose an agent" />
+              </SelectTrigger>
+              <SelectContent>
+                {mockAgents.map((agent) => (
+                  <SelectItem key={agent.id} value={agent.id}>
+                    <div className="flex items-center">
+                      <User className="h-4 w-4 mr-2 text-[#009B4D]" />
+                      <span>{agent.name}</span>
                     </div>
-                  )
-                )}
-              </div>
-            ) : (
-              <div className="text-muted-foreground">
-                Select a client to view their profile
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Order History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {selectedClient ? (
-              <div className="space-y-6">
-                {mockClients
-                  .find(client => client.id === selectedClient)
-                  ?.orderHistory.map((order, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-2">
-                      <div className="flex items-center gap-2 text-sm font-medium">
-                        <Calendar className="h-4 w-4" />
-                        {formatDate(order.date)}
+          <div className="space-y-4">
+            <label className="text-sm font-medium text-gray-700">Select Client</label>
+            <Select value={selectedClient} onValueChange={setSelectedClient}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a client" />
+              </SelectTrigger>
+              <SelectContent>
+                {mockClients.map((client) => (
+                  <SelectItem key={client.id} value={client.id}>
+                    <div className="flex items-center">
+                      <Building className="h-4 w-4 mr-2 text-[#009B4D]" />
+                      <span>{client.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Analysis and Recommendations */}
+        <div className="grid gap-8 md:grid-cols-2">
+          <Card className="bcg-card">
+            <CardHeader>
+              <CardTitle className="bcg-section-title">Menu Analysis</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <MenuUpload onUploadComplete={handleUploadComplete} />
+              {showResults && <AnalysisResults items={menuItems} />}
+            </CardContent>
+          </Card>
+
+          <Card className="bcg-card">
+            <CardHeader>
+              <CardTitle className="bcg-section-title">Product Recommendations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {showResults ? (
+                <ProductGrid products={products} />
+              ) : (
+                <div className="text-muted-foreground text-center py-8">
+                  Upload a menu to see product recommendations
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Client Profile */}
+          <Card className="bcg-card md:col-span-2">
+            <CardHeader>
+              <CardTitle className="bcg-section-title">Client Profile & Order History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedClient ? (
+                <div className="space-y-6">
+                  {mockClients.map((client) => 
+                    client.id === selectedClient && (
+                      <div key={client.id}>
+                        <div className="grid md:grid-cols-3 gap-4 mb-6">
+                          <div>
+                            <h3 className="font-medium text-[#009B4D]">{client.name}</h3>
+                            <p className="text-muted-foreground">Type: {client.type}</p>
+                            <p className="text-muted-foreground">Location: {client.location}</p>
+                          </div>
+                          <div className="md:col-span-2">
+                            <h4 className="font-medium mb-2">Recent Orders</h4>
+                            <div className="space-y-4">
+                              {client.orderHistory.map((order, index) => (
+                                <div key={index} className="border-b pb-2">
+                                  <div className="flex justify-between items-center mb-1">
+                                    <div className="flex items-center">
+                                      <Calendar className="h-4 w-4 mr-2 text-[#009B4D]" />
+                                      <span>{formatDate(order.date)}</span>
+                                    </div>
+                                    <span className="font-medium">{order.total}</span>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">
+                                    {order.items.join(", ")}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <ul className="list-disc list-inside text-sm text-muted-foreground pl-1">
-                        {order.items.map((item, itemIndex) => (
-                          <li key={itemIndex}>{item}</li>
-                        ))}
-                      </ul>
-                      <p className="text-sm font-medium">Total: {order.total}</p>
-                    </div>
-                  ))
-                }
-              </div>
-            ) : (
-              <div className="text-muted-foreground">
-                Select a client to view order history
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+                    )
+                  )}
+                </div>
+              ) : (
+                <div className="text-muted-foreground text-center py-8">
+                  Select a client to view their profile and order history
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </main>
     </div>
   )
 }
