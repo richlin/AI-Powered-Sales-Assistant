@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     # OpenAI Configuration
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL: str = "gpt-4o-mini"
-    MAX_TOKENS: int = 1000
+    MAX_TOKENS: int = 10000
 
     # File Upload Configuration
     UPLOAD_DIR: str = os.path.join(

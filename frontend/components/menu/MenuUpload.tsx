@@ -49,9 +49,6 @@ export default function MenuUpload({ onUploadComplete }: MenuUploadProps) {
       const response = await fetch("http://localhost:8000/api/v1/menu/analyze-menu", {
         method: "POST",
         body: formData,
-        headers: {
-          'Accept': 'application/json',
-        },
       })
 
       if (!response.ok) {
@@ -60,14 +57,27 @@ export default function MenuUpload({ onUploadComplete }: MenuUploadProps) {
       }
 
       const data = await response.json()
-      if (!data.menu_items) {
+      console.log("Menu analysis response:", data) // For debugging
+
+      if (!data.menu_items || !Array.isArray(data.menu_items)) {
         throw new Error("Invalid response format")
+      }
+
+      // Validate menu items structure
+      const validMenuItems = data.menu_items.every(item => 
+        item.name && 
+        item.price && 
+        Array.isArray(item.ingredients)
+      )
+
+      if (!validMenuItems) {
+        throw new Error("Invalid menu items format")
       }
 
       onUploadComplete(data)
       toast({
         title: "Success",
-        description: "Menu analysis completed successfully",
+        description: `Analyzed ${data.menu_items.length} menu items successfully`,
       })
     } catch (error) {
       console.error("Error analyzing menu:", error)
@@ -106,7 +116,14 @@ export default function MenuUpload({ onUploadComplete }: MenuUploadProps) {
           disabled={isLoading}
           variant="secondary"
         >
-          {isLoading ? "Analyzing..." : "Choose Menu Image"}
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
+              <span>Analyzing Menu...</span>
+            </div>
+          ) : (
+            "Choose Menu Image"
+          )}
         </Button>
         <p className="text-sm text-muted-foreground mt-2">
           Upload a JPG or PNG menu image to get started
@@ -114,7 +131,7 @@ export default function MenuUpload({ onUploadComplete }: MenuUploadProps) {
       </div>
       {isLoading && (
         <div className="text-sm text-muted-foreground text-center">
-          Analyzing menu... This may take a few seconds.
+          Analyzing menu using AI... This may take a few seconds.
         </div>
       )}
     </div>
